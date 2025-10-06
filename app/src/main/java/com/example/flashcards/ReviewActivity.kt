@@ -16,9 +16,16 @@ class ReviewActivity : AppCompatActivity() {
         val texts = intent.getStringArrayExtra("q_texts") ?: emptyArray()
         val answers = intent.getBooleanArrayExtra("q_answers") ?: BooleanArray(0)
 
+        // ✅ FIXED: Use mapIndexed to pair questions with their answers
+        val items = texts.mapIndexed { index, text ->
+            val answer = if (index < answers.size && answers[index])
+                getString(R.string.true_word)
+            else
+                getString(R.string.false_word)
+            Pair(text, answer)
+        }
+
         ui.recycler.layoutManager = LinearLayoutManager(this)
-        ui.recycler.adapter = ReviewAdapter(texts.zip(answers).map {
-            it.first to if (it.second) getString(R.string.true_word) else getString(R.string.false_word)
-        })
+        ui.recycler.adapter = ReviewAdapter(items)
     }
 }
